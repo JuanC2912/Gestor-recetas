@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 # Ruta de acceso a la carpeta de recetas
-recipes_folder = Path("Recetas")
+recipes_folder = Path("Recetas")  # Cambia esta ruta según tu sistema
 
 # Función para limpiar la pantalla
 def clear_screen():
@@ -14,7 +14,14 @@ def count_recipes():
 
 # Función para mostrar las categorías
 def show_categories():
-    return [folder.name for folder in recipes_folder.iterdir() if folder.is_dir()]
+    categories = [folder.name for folder in recipes_folder.iterdir() if folder.is_dir()]
+    if categories:
+        print("\nCategorías disponibles:")
+        for category in categories:
+            print(f"- {category}")
+    else:
+        print("\nNo hay categorías disponibles.")
+    return categories
 
 # Función para mostrar las recetas en una categoría específica
 def show_recipes_in_category(category):
@@ -71,17 +78,30 @@ def main_menu():
         
         if choice == '1':
             # Leer receta
-            category = input("Seleccione una categoría: ")
-            if category in show_categories():
-                recipe = input("Ingrese el nombre de la receta: ")
-                print(read_recipe(category, recipe))
+            categories = show_categories()
+            category = input("\nSeleccione una categoría: ")
+            if category in categories:
+                recipes = show_recipes_in_category(category)
+                if recipes:
+                    print("\nRecetas disponibles:")
+                    for recipe in recipes:
+                        print(f"- {recipe}")
+                    recipe = input("Ingrese el nombre de la receta: ")
+                    if recipe in recipes:
+                        print("\nContenido de la receta:")
+                        print(read_recipe(category, recipe))
+                    else:
+                        print("Receta no encontrada.")
+                else:
+                    print("No hay recetas en esta categoría.")
             else:
                 print("Categoría no encontrada.")
             
         elif choice == '2':
             # Crear receta
-            category = input("Seleccione una categoría: ")
-            if category in show_categories():
+            categories = show_categories()
+            category = input("\nSeleccione una categoría: ")
+            if category in categories:
                 recipe_name = input("Ingrese el nombre de la nueva receta: ")
                 content = input("Escriba el contenido de la receta: ")
                 create_recipe(category, recipe_name, content)
@@ -97,19 +117,34 @@ def main_menu():
             
         elif choice == '4':
             # Eliminar receta
-            category = input("Seleccione una categoría: ")
-            if category in show_categories():
-                recipe_name = input("Ingrese el nombre de la receta a eliminar: ")
-                delete_recipe(category, recipe_name)
-                print("Receta eliminada exitosamente.")
+            categories = show_categories()
+            category = input("\nSeleccione una categoría: ")
+            if category in categories:
+                recipes = show_recipes_in_category(category)
+                if recipes:
+                    print("\nRecetas disponibles:")
+                    for recipe in recipes:
+                        print(f"- {recipe}")
+                    recipe_name = input("Ingrese el nombre de la receta a eliminar: ")
+                    if recipe_name in recipes:
+                        delete_recipe(category, recipe_name)
+                        print("Receta eliminada exitosamente.")
+                    else:
+                        print("Receta no encontrada.")
+                else:
+                    print("No hay recetas en esta categoría.")
             else:
                 print("Categoría no encontrada.")
                 
         elif choice == '5':
             # Eliminar categoría
-            category_name = input("Ingrese el nombre de la categoría a eliminar: ")
-            delete_category(category_name)
-            print("Categoría eliminada exitosamente.")
+            categories = show_categories()
+            category_name = input("\nIngrese el nombre de la categoría a eliminar: ")
+            if category_name in categories:
+                delete_category(category_name)
+                print("Categoría eliminada exitosamente.")
+            else:
+                print("Categoría no encontrada.")
         
         elif choice == '6':
             # Salir
@@ -118,8 +153,7 @@ def main_menu():
         else:
             print("Opción no válida.")
         
-        input("Presione una tecla para volver al menú...")
+        input("\nPresione una tecla para volver al menú...")
 
 # Ejecutar el menú principal
 main_menu()
-1
